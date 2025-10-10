@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kira.dev - Portfolio</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: #0a0a0a;
+            color: #ffffff;
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        #graph-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: -1;
+            opacity: 0.5;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 2rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        header {
+            padding: 4rem 0 3rem;
+            text-align: center;
+        }
+
+        .profile-img {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            margin: 0 auto 1.5rem;
+            border: 3px solid #4a90e2;
+            display: block;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(45deg, #4a90e2, #63b8ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .subtitle {
+            font-size: 1rem;
+            color: #8892b0;
+            margin-bottom: 1rem;
+        }
+
+        .affiliation {
+            font-size: 0.95rem;
+            color: #64ffda;
+            margin-bottom: 2rem;
+        }
+
+        .social-links {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .social-links a {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            background: rgba(74, 144, 226, 0.1);
+            border: 1px solid rgba(74, 144, 226, 0.3);
+            border-radius: 8px;
+            color: #4a90e2;
+            text-decoration: none;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .social-links a:hover {
+            background: rgba(74, 144, 226, 0.2);
+            border-color: #4a90e2;
+            transform: translateY(-2px);
+        }
+
+        section {
+            margin-bottom: 5rem;
+            position: relative;
+        }
+
+        section::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 4px;
+            height: 100%;
+            background: linear-gradient(180deg, #4a90e2, transparent);
+            border-radius: 2px;
+        }
+
+        .section-content {
+            padding-left: 2rem;
+        }
+
+        h2 {
+            font-size: 1.75rem;
+            margin-bottom: 1.5rem;
+            color: #4a90e2;
+            font-weight: 600;
+            position: relative;
+        }
+
+        .about-content {
+            color: #ccd6f6;
+            font-size: 1.05rem;
+            line-height: 1.8;
+        }
+
+        .work-item {
+            margin-bottom: 2rem;
+            padding-bottom: 2rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .work-item:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+
+        .work-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            margin-bottom: 0.5rem;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .work-title {
+            color: #63b8ff;
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+
+        .work-period {
+            color: #8892b0;
+            font-size: 0.9rem;
+        }
+
+        .work-company {
+            color: #64ffda;
+            font-size: 1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .work-description {
+            color: #8892b0;
+            line-height: 1.7;
+            font-size: 0.95rem;
+        }
+
+        .coming-soon {
+            text-align: center;
+            color: #64ffda;
+            font-size: 1.1rem;
+            padding: 2rem 0;
+            font-style: italic;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .container {
+                padding: 1rem;
+            }
+
+            .social-links {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .social-links a {
+                width: 100%;
+                max-width: 250px;
+                justify-content: center;
+            }
+
+            section::before {
+                width: 2px;
+            }
+
+            .section-content {
+                padding-left: 1rem;
+            }
+
+            .work-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+        }
+    </style>
+</head>
+<body>
+    <canvas id="graph-canvas"></canvas>
+    
+    <div class="container">
+        <header>
+            <img src="https://via.placeholder.com/150" alt="Profile" class="profile-img">
+            <h1>Kira</h1>
+            <p class="subtitle">Software Engineer & Creative Developer</p>
+            <p class="affiliation">The University of Osaka B3 | Informatics Intelligence</p>
+            <div class="social-links">
+                <a href="https://github.com/yourusername" target="_blank">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+                    </svg>
+                    GitHub
+                </a>
+                <a href="https://linkedin.com/in/yourusername" target="_blank">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/>
+                    </svg>
+                    LinkedIn
+                </a>
+            </div>
+        </header>
+
+        <section>
+            <div class="section-content">
+                <h2>About Me</h2>
+                <p class="about-content">情熱的なソフトウェアエンジニアとして、美しいインターフェースと革新的なソリューションの創造に取り組んでいます。大阪大学で情報知能学を学び、機械学習やWeb開発の技術を磨いています。</p>
+            </div>
+        </section>
+
+        <section>
+            <div class="section-content">
+                <h2>Work Experience</h2>
+                <div class="work-item">
+                    <div class="work-header">
+                        <h3 class="work-title">Software Engineer Intern</h3>
+                        <span class="work-period">2024.06 - Present</span>
+                    </div>
+                    <p class="work-company">Tech Company Inc.</p>
+                    <p class="work-description">機械学習モデルの開発とWebアプリケーションの実装を担当。最新の技術スタックを活用したプロダクト開発に従事。</p>
+                </div>
+                <div class="work-item">
+                    <div class="work-header">
+                        <h3 class="work-title">Research Assistant</h3>
+                        <span class="work-period">2023.04 - 2024.05</span>
+                    </div>
+                    <p class="work-company">The University of Osaka</p>
+                    <p class="work-description">研究室にてコンピュータビジョンと自然言語処理に関する研究に従事。実験の設計・実施およびデータ分析を担当。</p>
+                </div>
+            </div>
+        </section>
+
+        <section>
+            <div class="section-content">
+                <h2>Publications</h2>
+                <p class="coming-soon">Coming soon...</p>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        class NetworkGraph {
+            constructor(canvas) {
+                this.canvas = canvas;
+                this.ctx = canvas.getContext('2d');
+                this.nodes = [];
+                this.edges = [];
+                this.mouse = { x: 0, y: 0 };
+                this.nodeCount = 50;
+                this.width = window.innerWidth;
+                this.height = window.innerHeight;
+                
+                this.init();
+                this.animate();
+                this.setupEventListeners();
+            }
+
+            init() {
+                this.canvas.width = this.width;
+                this.canvas.height = this.height;
+                
+                for (let i = 0; i < this.nodeCount; i++) {
+                    this.nodes.push({
+                        x: Math.random() * this.width,
+                        y: Math.random() * this.height,
+                        vx: (Math.random() - 0.5) * 0.5,
+                        vy: (Math.random() - 0.5) * 0.5,
+                        radius: Math.random() * 3 + 2,
+                        connections: []
+                    });
+                }
+                
+                this.createEdges();
+            }
+
+            createEdges() {
+                const maxDistance = 150;
+                
+                for (let i = 0; i < this.nodes.length; i++) {
+                    for (let j = i + 1; j < this.nodes.length; j++) {
+                        const distance = this.getDistance(this.nodes[i], this.nodes[j]);
+                        
+                        if (distance < maxDistance) {
+                            this.edges.push({
+                                source: i,
+                                target: j,
+                                distance: distance
+                            });
+                            
+                            this.nodes[i].connections.push(j);
+                            this.nodes[j].connections.push(i);
+                        }
+                    }
+                }
+            }
+
+            getDistance(node1, node2) {
+                const dx = node1.x - node2.x;
+                const dy = node1.y - node2.y;
+                return Math.sqrt(dx * dx + dy * dy);
+            }
+
+            setupEventListeners() {
+                window.addEventListener('mousemove', (e) => {
+                    this.mouse.x = e.clientX;
+                    this.mouse.y = e.clientY;
+                });
+            }
+
+            update() {
+                this.nodes.forEach(node => {
+                    node.x += node.vx;
+                    node.y += node.vy;
+                    
+                    if (node.x <= 0 || node.x >= this.width) {
+                        node.vx *= -1;
+                    }
+                    if (node.y <= 0 || node.y >= this.height) {
+                        node.vy *= -1;
+                    }
+                    
+                    node.x = Math.max(0, Math.min(this.width, node.x));
+                    node.y = Math.max(0, Math.min(this.height, node.y));
+                });
+                
+                this.edges = [];
+                this.nodes.forEach(node => node.connections = []);
+                this.createEdges();
+            }
+
+            draw() {
+                this.ctx.clearRect(0, 0, this.width, this.height);
+                
+                this.ctx.strokeStyle = 'rgba(74, 144, 226, 0.2)';
+                this.ctx.lineWidth = 1;
+                
+                this.edges.forEach(edge => {
+                    const source = this.nodes[edge.source];
+                    const target = this.nodes[edge.target];
+                    
+                    const mouseDistance = this.getDistance(
+                        { x: this.mouse.x, y: this.mouse.y },
+                        { x: (source.x + target.x) / 2, y: (source.y + target.y) / 2 }
+                    );
+                    
+                    const opacity = Math.max(0, 1 - mouseDistance / 300);
+                    this.ctx.strokeStyle = `rgba(74, 144, 226, ${0.2 + opacity * 0.5})`;
+                    
+                    this.ctx.beginPath();
+                    this.ctx.moveTo(source.x, source.y);
+                    this.ctx.lineTo(target.x, target.y);
+                    this.ctx.stroke();
+                });
+                
+                this.nodes.forEach(node => {
+                    const mouseDistance = this.getDistance(
+                        { x: this.mouse.x, y: this.mouse.y },
+                        node
+                    );
+                    
+                    const glowIntensity = Math.max(0, 1 - mouseDistance / 200);
+                    
+                    if (glowIntensity > 0) {
+                        const gradient = this.ctx.createRadialGradient(
+                            node.x, node.y, 0,
+                            node.x, node.y, node.radius + 10
+                        );
+                        gradient.addColorStop(0, `rgba(74, 144, 226, ${glowIntensity})`);
+                        gradient.addColorStop(1, 'rgba(74, 144, 226, 0)');
+                        
+                        this.ctx.fillStyle = gradient;
+                        this.ctx.beginPath();
+                        this.ctx.arc(node.x, node.y, node.radius + 10, 0, Math.PI * 2);
+                        this.ctx.fill();
+                    }
+                    
+                    this.ctx.fillStyle = `rgba(74, 144, 226, ${0.8 + glowIntensity * 0.2})`;
+                    this.ctx.beginPath();
+                    this.ctx.arc(node.x, node.y, node.radius, 0, Math.PI * 2);
+                    this.ctx.fill();
+                });
+            }
+
+            animate() {
+                this.update();
+                this.draw();
+                requestAnimationFrame(() => this.animate());
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const canvas = document.getElementById('graph-canvas');
+            new NetworkGraph(canvas);
+        });
+    </script>
+</body>
+</html>
